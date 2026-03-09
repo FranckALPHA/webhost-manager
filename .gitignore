@@ -1,0 +1,25 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/*.db
+backend/*.log
+backend/.env
+backend/*.pyc
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.env
+frontend/bun.lockb
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
