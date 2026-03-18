@@ -9,7 +9,7 @@ from app.core.security import get_current_user, get_current_admin
 from app.models.user import User
 from app.models.hebergement import Hebergement
 from app.models.client import Client
-from app.schemas.schemas import (
+from app.schemas.hebergement import (
     HebergementCreate, HebergementOut, HebergementUpdate, HebergementWithClient
 )
 

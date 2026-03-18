@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Hosting {
   domaine: string;
-  client: string;
-  expiration: string;
+  date: string;
 }
 
 interface ExpiringHostingsProps {
@@ -12,11 +12,17 @@ interface ExpiringHostingsProps {
 }
 
 export const ExpiringHostings = ({ hostings }: ExpiringHostingsProps) => {
+  const navigate = useNavigate();
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Hebergement expirant bientôt</CardTitle>
-        <button className="text-muted-foreground hover:text-foreground">
+        <CardTitle className="text-lg font-semibold">Hébergements expirant bientôt</CardTitle>
+        <button 
+          onClick={() => navigate("/hebergements")}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          title="Voir tous les hébergements"
+        >
           <ExternalLink className="h-4 w-4" />
         </button>
       </CardHeader>
@@ -25,12 +31,11 @@ export const ExpiringHostings = ({ hostings }: ExpiringHostingsProps) => {
           <div key={i} className="flex items-center justify-between rounded-lg border border-border p-3">
             <div>
               <p className="text-sm font-medium text-foreground">{h.domaine}</p>
-              <p className="text-xs text-muted-foreground">{h.client}</p>
             </div>
-            <span className="text-xs text-destructive font-medium">{h.expiration}</span>
+            <span className="text-xs text-destructive font-medium">Expire le {h.date}</span>
           </div>
         )) : (
-          <p className="text-sm text-muted-foreground">Aucun hébergement expirant bientôt</p>
+          <p className="text-sm text-center py-4 text-muted-foreground">Aucun hébergement expirant prochainement</p>
         )}
       </CardContent>
     </Card>

@@ -10,12 +10,10 @@ from app.core.security import get_current_user, get_current_admin
 from app.models.user import User
 from app.models.service import Service, Relance, Certificat, VirtualMachine
 from app.models.hebergement import Hebergement
-from app.schemas.schemas import (
-    ServiceCreate, ServiceOut, ServiceUpdate,
-    RelanceCreate, RelanceOut,
-    CertificatCreate, CertificatOut,
-    VMCreate, VMOut, VMAction,
-)
+from app.schemas.service import ServiceCreate, ServiceOut, ServiceUpdate
+from app.schemas.relance import RelanceCreate, RelanceOut
+from app.schemas.certificat import CertificatCreate, CertificatOut
+from app.schemas.vm import VMOut,VMAction,VMCreate
 
 # ─── SERVICES ────────────────────────────────────────────────────────────────
 

@@ -9,7 +9,7 @@ from app.models.client import Client
 from app.models.hebergement import Hebergement
 from app.models.paiement import Paiement
 from app.models.service import Relance, Certificat
-from app.schemas.schemas import DashboardStats
+from app.schemas.dashboard import DashboardStats
 
 router = APIRouter(prefix="/api/dashboard", tags=["Dashboard"])
 

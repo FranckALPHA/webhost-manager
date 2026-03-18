@@ -1,10 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { PaiementsStats } from "./components/PaiementsStats";
 import { PaiementsFilters } from "./components/PaiementsFilters";
 import { PaiementsTable } from "./components/PaiementsTable";
+import { PaiementDialog } from "./components/PaiementDialog";
 import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Plus, Download } from "lucide-react";
+import { toast } from "sonner";
 
 export const Paiements = () => {
+  const queryClient = useQueryClient();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const { data: paiementsData, isLoading } = useQuery({
     queryKey: ["paiements"],
     queryFn: () => api.paiements.getAll(),
@@ -13,6 +21,17 @@ export const Paiements = () => {
   const { data: dashboardStats } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: () => api.dashboard.getStats(),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => api.paiements.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["paiements"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      setIsDialogOpen(false);
+      toast.success("Paiement enregistré avec succès");
+    },
+    onError: (error: any) => toast.error(error.message),
   });
 
   const stats = [
@@ -34,27 +53,22 @@ export const Paiements = () => {
     },
   ];
 
-  const handleSearch = (query: string) => {
-    console.log("Search query:", query);
+  const handleDownloadInvoice = (paiement: any) => {
+    toast.info(`Téléchargement de la facture ${paiement.id} en cours... (Simulation)`);
+    // Simulation de génération PDF
+    setTimeout(() => {
+      toast.success("Facture téléchargée avec succès");
+    }, 1500);
   };
 
-  const handleStatusChange = (status: string) => {
-    console.log("Status changed:", status);
-  };
-
-  // Mappage des données du backend vers le format attendu par la table
   const mappedPaiements = paiementsData?.map((p: any) => ({
     id: p.id.toString(),
-    client: `Client #${p.client_id}`, // Le backend PaiementOut n'inclut pas le nom du client par défaut
+    client: `Client #${p.client_id}`,
     prix: `${p.montant.toLocaleString()} FCFA`,
     date: p.date_paiement,
     methode: p.mode_paiement.toUpperCase(),
-    status: p.statut_paiement === "payé" ? "En cours" : p.statut_paiement,
+    status: p.statut_paiement === "payé" ? "Payé" : "En attente",
   })) || [];
-
-  const handleView = (paiement: any) => {
-    console.log("View paiement:", paiement);
-  };
 
   if (isLoading) {
     return <div className="p-6">Chargement...</div>;
@@ -62,10 +76,27 @@ export const Paiements = () => {
 
   return (
     <div className="space-y-6 p-6">
-      <h1 className="text-3xl font-bold text-foreground">Suivi paiement</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold text-foreground">Suivi paiement</h1>
+        <Button onClick={() => setIsDialogOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Nouveau paiement
+        </Button>
+      </div>
+
       <PaiementsStats stats={stats} />
-      <PaiementsFilters onSearch={handleSearch} onStatusChange={handleStatusChange} />
-      <PaiementsTable paiements={mappedPaiements} onView={handleView} />
+      <PaiementsFilters />
+      <PaiementsTable 
+        paiements={mappedPaiements} 
+        onView={handleDownloadInvoice} 
+      />
+
+      <PaiementDialog
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSubmit={(values) => createMutation.mutate(values)}
+        isLoading={createMutation.isPending}
+      />
     </div>
   );
 };

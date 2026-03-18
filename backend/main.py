@@ -10,6 +10,7 @@ from app.routers.clients import router as clients_router
 from app.routers.hebergements import router as hebergements_router
 from app.routers.paiements import router as paiements_router
 from app.routers.dashboard import router as dashboard_router
+from app.routers.logs import router as logs_router
 from app.routers.extras import (
     services_router, relances_router, certificats_router, vm_router
 )
@@ -50,10 +51,16 @@ uvicorn main:app --reload
     lifespan=lifespan,
 )
 
-# ── CORS — à restreindre en production ────────────────────────────────────────
+# ── CORS ──────────────────────────────────────────────────────────────────────
+origins = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:5173",  # Vite default
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,6 +73,7 @@ app.include_router(clients_router)
 app.include_router(hebergements_router)
 app.include_router(paiements_router)
 app.include_router(dashboard_router)
+app.include_router(logs_router)
 app.include_router(services_router)
 app.include_router(relances_router)
 app.include_router(certificats_router)

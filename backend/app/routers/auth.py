@@ -5,10 +5,10 @@ from sqlalchemy import select
 from app.core.database import get_db
 from app.core.security import (
     hash_password, verify_password, create_access_token,
-    get_current_user, get_current_admin,
+    get_current_user,
 )
 from app.models.user import User
-from app.schemas.schemas import UserCreate, UserOut, Token
+from app.schemas.user import UserCreate, UserOut, Token
 
 router = APIRouter(prefix="/api/auth", tags=["Authentification"])
 
@@ -40,8 +40,11 @@ async def login(
     form: OAuth2PasswordRequestForm = Depends(),
     db: AsyncSession = Depends(get_db),
 ):
-    """Connexion avec username + password → JWT."""
-    result = await db.execute(select(User).where(User.username == form.username))
+    """Connexion avec username ou email + password → JWT."""
+    # Recherche par username OU par email
+    result = await db.execute(
+        select(User).where((User.username == form.username) | (User.email == form.username))
+    )
     user = result.scalar_one_or_none()
 
     if not user or not verify_password(form.password, user.hashed_password):

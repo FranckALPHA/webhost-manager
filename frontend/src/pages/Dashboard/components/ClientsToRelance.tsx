@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Client {
   nom: string;
@@ -12,11 +13,17 @@ interface ClientsToRelanceProps {
 }
 
 export const ClientsToRelance = ({ clients }: ClientsToRelanceProps) => {
+  const navigate = useNavigate();
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-semibold">Clients à relancer</CardTitle>
-        <button className="text-muted-foreground hover:text-foreground">
+        <CardTitle className="text-lg font-semibold">Relances en attente</CardTitle>
+        <button 
+          onClick={() => navigate("/relances")}
+          className="text-muted-foreground hover:text-foreground transition-colors"
+          title="Voir toutes les relances"
+        >
           <ExternalLink className="h-4 w-4" />
         </button>
       </CardHeader>
@@ -30,7 +37,7 @@ export const ClientsToRelance = ({ clients }: ClientsToRelanceProps) => {
             <span className="text-sm font-semibold text-foreground">{c.montant}</span>
           </div>
         )) : (
-          <p className="text-sm text-muted-foreground">Aucun client à relancer</p>
+          <p className="text-sm text-center py-4 text-muted-foreground">Toutes les relances sont à jour</p>
         )}
       </CardContent>
     </Card>

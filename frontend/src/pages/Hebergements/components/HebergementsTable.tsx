@@ -1,16 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
 
 export interface Hebergement {
-  id: string;
-  domaine: string;
-  type: string;
-  client: string;
-  dateSouscription: string;
-  dateExpiration: string;
-  status: string;
+  id: number;
+  nom_domaine: string;
+  type_hebergement: string;
+  client_id: number;
+  date_debut: string;
+  date_expiration: string;
+  statut: string;
 }
 
 interface HebergementsTableProps {
@@ -28,26 +27,28 @@ export const HebergementsTable = ({ hebergements, onEdit, onDelete }: Hebergemen
             <TableRow className="bg-muted/30">
               <TableHead className="uppercase text-xs font-semibold tracking-wider">ID</TableHead>
               <TableHead className="uppercase text-xs font-semibold tracking-wider">Nom Domaine</TableHead>
-              <TableHead className="uppercase text-xs font-semibold tracking-wider">Type de Serveur</TableHead>
-              <TableHead className="uppercase text-xs font-semibold tracking-wider">Client</TableHead>
-              <TableHead className="uppercase text-xs font-semibold tracking-wider">Date Suscription</TableHead>
-              <TableHead className="uppercase text-xs font-semibold tracking-wider">Date Expiration</TableHead>
+              <TableHead className="uppercase text-xs font-semibold tracking-wider">Type</TableHead>
+              <TableHead className="uppercase text-xs font-semibold tracking-wider">Client ID</TableHead>
+              <TableHead className="uppercase text-xs font-semibold tracking-wider">Souscription</TableHead>
+              <TableHead className="uppercase text-xs font-semibold tracking-wider">Expiration</TableHead>
               <TableHead className="uppercase text-xs font-semibold tracking-wider">Status</TableHead>
               <TableHead className="uppercase text-xs font-semibold tracking-wider">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {hebergements.map((item, index) => (
-              <TableRow key={index}>
+            {hebergements.map((item) => (
+              <TableRow key={item.id}>
                 <TableCell className="text-muted-foreground">{item.id}</TableCell>
-                <TableCell className="text-muted-foreground">{item.domaine}</TableCell>
-                <TableCell className="text-muted-foreground">{item.type}</TableCell>
-                <TableCell className="font-medium">{item.client}</TableCell>
-                <TableCell className="text-muted-foreground">{item.dateSouscription}</TableCell>
-                <TableCell className="text-muted-foreground">{item.dateExpiration}</TableCell>
+                <TableCell className="font-medium">{item.nom_domaine}</TableCell>
+                <TableCell className="text-muted-foreground capitalize">{item.type_hebergement}</TableCell>
+                <TableCell className="text-muted-foreground">{item.client_id}</TableCell>
+                <TableCell className="text-muted-foreground">{new Date(item.date_debut).toLocaleDateString()}</TableCell>
+                <TableCell className="text-muted-foreground">{new Date(item.date_expiration).toLocaleDateString()}</TableCell>
                 <TableCell>
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-600">
-                    {item.status}
+                  <span className={`rounded-full px-3 py-1 text-xs font-medium ${
+                    item.statut === 'actif' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                  }`}>
+                    {item.statut}
                   </span>
                 </TableCell>
                 <TableCell>
@@ -72,9 +73,6 @@ export const HebergementsTable = ({ hebergements, onEdit, onDelete }: Hebergemen
             ))}
           </TableBody>
         </Table>
-        <div className="px-4 py-3 text-sm text-muted-foreground">
-          0 lignes sur {hebergements.length} selectionnées
-        </div>
       </CardContent>
     </Card>
   );

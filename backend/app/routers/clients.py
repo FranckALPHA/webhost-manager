@@ -6,7 +6,7 @@ from app.core.database import get_db
 from app.core.security import get_current_user
 from app.models.user import User
 from app.models.client import Client
-from app.schemas.schemas import ClientCreate, ClientOut, ClientUpdate
+from app.schemas.client import ClientCreate, ClientOut, ClientUpdate
 
 router = APIRouter(prefix="/api/clients", tags=["Clients"])
 

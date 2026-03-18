@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:9990";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:9990";
 
 export const api = {
   async fetch(endpoint: string, options: RequestInit = {}) {
@@ -19,6 +19,7 @@ export const api = {
       throw new Error(errorData.detail || "Une erreur est survenue");
     }
 
+    if (response.status === 204) return null;
     return response.json();
   },
 
@@ -90,6 +91,9 @@ export const api = {
       const query = status ? `?statut=${status}` : "";
       return api.fetch(`/api/hebergements/${query}`);
     },
+    async getById(id: number) {
+      return api.fetch(`/api/hebergements/${id}`);
+    },
     async getExpiresSoon(days: number = 30) {
       return api.fetch(`/api/hebergements/expires-soon?days=${days}`);
     },
@@ -99,9 +103,20 @@ export const api = {
         body: JSON.stringify(data),
       });
     },
+    async update(id: number, data: any) {
+      return api.fetch(`/api/hebergements/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
     async renew(id: number, months: number = 12) {
       return api.fetch(`/api/hebergements/${id}/renouveler?mois=${months}`, {
         method: "POST",
+      });
+    },
+    async delete(id: number) {
+      return api.fetch(`/api/hebergements/${id}`, {
+        method: "DELETE",
       });
     },
   },
@@ -123,38 +138,89 @@ export const api = {
         body: JSON.stringify(data),
       });
     },
+    async update(id: number, data: any) {
+      return api.fetch(`/api/paiements/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
+  },
+
+  services: {
+    async getAll() {
+      return api.fetch("/api/services/");
+    },
+    async create(data: any) {
+      return api.fetch("/api/services/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    async update(id: number, data: any) {
+      return api.fetch(`/api/services/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+      });
+    },
   },
 
   relances: {
     async getAll() {
       return api.fetch("/api/relances/");
     },
+    async create(data: any) {
+      return api.fetch("/api/relances/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
+    async autoGenerate(days: number = 30) {
+      return api.fetch(`/api/relances/auto-generate?days=${days}`, {
+        method: "POST",
+      });
+    },
+  },
+
+  certificats: {
+    async getAll() {
+      return api.fetch("/api/certificats/");
+    },
+    async create(data: any) {
+      return api.fetch("/api/certificats/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+    },
   },
 
   notifications: {
     async getAll() {
-      // On simule des notifications à partir des relances et paiements récents
-      const relances = await api.relances.getAll();
-      const paiements = await api.paiements.getAll();
-      
-      const notifications = [
-        ...relances.map((r: any) => ({
-          id: `r-${r.id}`,
-          type: "warning",
-          titre: "Relance envoyée",
-          message: `Une relance a été envoyée pour l'hébergement #${r.hebergement_id}`,
-          date: r.date_relance
-        })),
-        ...paiements.map((p: any) => ({
-          id: `p-${p.id}`,
-          type: p.statut_paiement === "payé" ? "success" : "info",
-          titre: "Activité de paiement",
-          message: `Paiement de ${p.montant} FCFA : ${p.statut_paiement}`,
-          date: p.date_paiement
-        }))
-      ];
-      
-      return notifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      try {
+        const relances = await api.relances.getAll();
+        const paiements = await api.paiements.getAll();
+        
+        const notifications = [
+          ...relances.map((r: any) => ({
+            id: `r-${r.id}`,
+            type: "warning",
+            titre: "Relance envoyée",
+            message: `Relance ${r.type_relance} pour l'hébergement #${r.hebergement_id}`,
+            date: r.date_relance
+          })),
+          ...paiements.map((p: any) => ({
+            id: `p-${p.id}`,
+            type: p.statut_paiement === "payé" ? "success" : "info",
+            titre: "Activité de paiement",
+            message: `Paiement de ${p.montant} FCFA : ${p.statut_paiement}`,
+            date: p.date_paiement
+          }))
+        ];
+        
+        return notifications.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      } catch (error) {
+        console.error("Erreur lors de la récupération des notifications:", error);
+        return [];
+      }
     }
   },
 
@@ -185,6 +251,9 @@ export const api = {
     async getAll() {
       return api.fetch("/api/vms/");
     },
+    async getById(id: number) {
+      return api.fetch(`/api/vms/${id}`);
+    },
     async create(data: any) {
       return api.fetch("/api/vms/", {
         method: "POST",
@@ -192,14 +261,21 @@ export const api = {
       });
     },
     async action(id: number, action: "start" | "stop" | "restart" | "suspend") {
-      return api.fetch(`/api/vms/${id}/action?action=${action}`, {
+      return api.fetch(`/api/vms/${id}/action`, {
         method: "POST",
+        body: JSON.stringify({ action }),
       });
     },
     async delete(id: number) {
       return api.fetch(`/api/vms/${id}`, {
         method: "DELETE",
       });
+    },
+  },
+
+  logs: {
+    async getAll() {
+      return api.fetch("/api/logs/");
     },
   },
 };

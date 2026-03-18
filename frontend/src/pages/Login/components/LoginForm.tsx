@@ -5,23 +5,23 @@ import { Label } from "@/components/ui/label";
 import { Lock, Mail } from "lucide-react";
 
 interface LoginFormProps {
-  onLogin?: (email: string, password: string) => void;
+  onLogin?: (username: string, password: string) => void;
   onForgotPassword?: () => void;
 }
 
 export const LoginForm = ({ onLogin, onForgotPassword }: LoginFormProps = {}) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    if (!username || !password) {
       setError("Veuillez remplir tous les champs");
       return;
     }
     setError("");
-    onLogin?.(email, password);
+    onLogin?.(username, password);
   };
 
   return (
@@ -33,18 +33,18 @@ export const LoginForm = ({ onLogin, onForgotPassword }: LoginFormProps = {}) =>
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email
+        <Label htmlFor="username" className="text-sm font-medium text-foreground">
+          Identifiant
         </Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
           <Input
-            id="email"
-            type="email"
-            placeholder="admin@example.com"
-            value={email}
+            id="username"
+            type="text"
+            placeholder="admin ou agent1"
+            value={username}
             onChange={(e) => {
-              setEmail(e.target.value);
+              setUsername(e.target.value);
               setError("");
             }}
             className="pl-10 h-[55px] rounded-[7.5px]"

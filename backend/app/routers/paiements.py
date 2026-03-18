@@ -8,7 +8,7 @@ from app.core.security import get_current_user, get_current_admin
 from app.models.user import User
 from app.models.paiement import Paiement
 from app.models.client import Client
-from app.schemas.schemas import PaiementCreate, PaiementOut, PaiementUpdate
+from app.schemas.paiement import PaiementCreate, PaiementOut, PaiementUpdate
 
 router = APIRouter(prefix="/api/paiements", tags=["Paiements"])
 

@@ -8,13 +8,8 @@ export const Login = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (username: string, password: string) => {
     try {
-      // Le backend utilise 'username', on utilise la partie avant le @ si c'est un email,
-      // ou on passe l'email tel quel si le seed utilise des emails comme usernames.
-      // Dans seed.py, les usernames sont 'admin' et 'agent1'.
-      const username = email.split('@')[0]; 
-      
       await api.auth.login(username, password);
       
       toast({

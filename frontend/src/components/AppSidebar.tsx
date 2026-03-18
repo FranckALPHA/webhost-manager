@@ -14,31 +14,43 @@ import {
   Menu,
   ChevronDown,
   Send,
+  ShieldCheck,
+  Cpu,
+  Settings,
 } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Tableau de board" },
   { to: "/clients", icon: Users, label: "Clients" },
-  { to: "/hebergements", icon: Server, label: "Herbergements" },
   { 
-    icon: CreditCard, label: "Payements", 
+    icon: Server, label: "Hébergements",
     children: [
-      { to: "/paiements", label: "Historique rélance", icon: RefreshCw },
+      { to: "/hebergements", label: "Tous les hébergements", icon: Server },
+      { to: "/services", label: "Services", icon: Settings },
+      { to: "/certificats", label: "Certificats SSL", icon: ShieldCheck },
+      { to: "/vms", label: "Serveurs VPS (VM)", icon: Cpu },
     ]
   },
   { 
-    icon: Send, label: "Relance",
+    icon: CreditCard, label: "Paiements", 
     children: [
-      { to: "/relances", label: "Historique rélance", icon: RefreshCw },
+      { to: "/paiements", label: "Historique paiements", icon: CreditCard },
+    ]
+  },
+  { 
+    icon: Send, label: "Relances",
+    children: [
+      { to: "/relances", label: "Suivi relances", icon: RefreshCw },
     ]
   },
   { to: "/utilisateurs", icon: UserCog, label: "Utilisateurs" },
-  { to: "/notifications", icon: Bell, label: "Notification" },
+  { to: "/logs", icon: RefreshCw, label: "Audit Logs" },
+  { to: "/notifications", icon: Bell, label: "Notifications" },
 ];
 
 const AppSidebar = () => {
   const location = useLocation();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(["Hébergements", "Paiements", "Relances"]);
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev => 

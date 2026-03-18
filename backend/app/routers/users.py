@@ -5,7 +5,7 @@ from typing import List
 from app.core.database import get_db
 from app.core.security import get_current_admin, hash_password
 from app.models.user import User
-from app.schemas.schemas import UserCreate, UserOut, UserUpdate
+from app.schemas.user import UserCreate, UserOut, UserUpdate
 
 router = APIRouter(prefix="/api/users", tags=["Utilisateurs (Admin)"])
 
