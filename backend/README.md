@@ -40,22 +40,21 @@ webhostmanager/
 
 ### 1. Prérequis
 - Python 3.11+
+- `uv` installé
 
-### 2. Environnement virtuel
+### 2. Environnement virtuel (uv)
 ```bash
-python -m venv venv
-source venv/bin/activate        # Linux/Mac
-venv\Scripts\activate           # Windows
+uv venv
 ```
 
 ### 3. Installer les dépendances
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### 4. Peupler la base avec des données de démo
 ```bash
-python seed.py
+uv run python seed.py
 ```
 
 Comptes créés :
@@ -66,7 +65,7 @@ Comptes créés :
 
 ### 5. Lancer le serveur
 ```bash
-uvicorn main:app --reload
+uv run uvicorn main:app --reload
 ```
 
 API disponible sur : **http://localhost:8000**
